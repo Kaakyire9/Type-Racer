@@ -104,10 +104,32 @@ document.addEventListener('DOMContentLoaded', function () {
         updateSampleText();
     }
 
+    function highlightText() {
+        const sampleText = sampleTextDiv.textContent.trim();
+        const userText = userInput.value.trim();
+        const sampleWords = sampleText.split(" ");
+        const userWords = userText.split(" ");
+    
+        let highlightedText = '';
+    
+        for (let i = 0; i < sampleWords.length; i++) {
+            if (userWords[i] === undefined) {
+                highlightedText += `<span>${sampleWords[i]}</span> `;
+            } else if (userWords[i] === sampleWords[i]) {
+                highlightedText += `<span style="color: blue;">${sampleWords[i]}</span> `;
+            } else {
+                highlightedText += `<span style="color: red;">${sampleWords[i]}</span> `;
+            }
+        }
+    
+        sampleTextDiv.innerHTML = highlightedText.trim();
+    }
+
     difficultySelect.addEventListener('change', updateSampleText);
     startButton.addEventListener('click', startTest);
     stopButton.addEventListener('click', stopTest);
     retryButton.addEventListener('click', resetTest);
+    userInput.addEventListener('input', highlightText);
 
     // Initialize with a random text from the default difficulty level
     updateSampleText();
