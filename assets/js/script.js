@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const sampleTextDiv = document.getElementById('sample-text');
     const startButton = document.getElementById('start-btn');
     const stopButton = document.getElementById('stop-btn');
+    const retryButton = document.getElementById('retry-btn');
     const timeDisplay = document.getElementById('time');
     const userInput = document.getElementById('user-input');
     const levelDisplay = document.getElementById('level');
@@ -93,10 +94,21 @@ document.addEventListener('DOMContentLoaded', function () {
         levelDisplay.textContent = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
     }
 
+    function resetTest() {
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        userInput.disabled = true;
+        userInput.value = '';
+        timeDisplay.textContent = '0';
+        wpmDisplay.textContent = '0';
+        updateSampleText();
+    }
+
     difficultySelect.addEventListener('change', updateSampleText);
     startButton.addEventListener('click', startTest);
     stopButton.addEventListener('click', stopTest);
+    retryButton.addEventListener('click', resetTest);
 
-    // Initialise with a random text from the default difficulty level
+    // Initialize with a random text from the default difficulty level
     updateSampleText();
 });
