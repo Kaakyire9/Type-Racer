@@ -19,8 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const difficultySelect = document.getElementById('difficulty');
     const sampleTextDiv = document.getElementById('sample-text');
-    const startButton = document.getElementById('start-btn');
-    const stopButton = document.getElementById('stop-btn');
     const retryButton = document.getElementById('retry-btn');
     const timeDisplay = document.getElementById('time');
     const userInput = document.getElementById('user-input');
@@ -29,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let startTime;
     let endTime;
+    let testStarted = false;
 
     function getRandomText(textArray) {
         const randomIndex = Math.floor(Math.random() * textArray.length);
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateSampleText() {
-        let selectedDifficulty = difficultySelect.value;
+        const selectedDifficulty = difficultySelect.value;
         let selectedText;
 
         if (selectedDifficulty === 'easy') {
@@ -52,11 +51,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startTest() {
         startTime = new Date();
-        startButton.disabled = true;
-        stopButton.disabled = false;
         userInput.disabled = false;
         userInput.value = ''; // Clear the input area
         userInput.focus();
+        testStarted = true;
     }
 
     function stopTest() {
@@ -66,9 +64,8 @@ document.addEventListener('DOMContentLoaded', function () {
         
         displayResults(timeTaken, wpm);
 
-        startButton.disabled = false;
-        stopButton.disabled = true;
         userInput.disabled = true;
+        testStarted = false;
     }
 
     function calculateWPM(timeTaken) {
@@ -95,13 +92,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function resetTest() {
-        startButton.disabled = false;
-        stopButton.disabled = true;
-        userInput.disabled = true;
+        userInput.disabled = false;
         userInput.value = '';
         timeDisplay.textContent = '0';
         wpmDisplay.textContent = '0';
         updateSampleText();
+        testStarted = false;
     }
 
     function highlightText() {
@@ -126,10 +122,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     difficultySelect.addEventListener('change', updateSampleText);
-    startButton.addEventListener('click', startTest);
-    stopButton.addEventListener('click', stopTest);
     retryButton.addEventListener('click', resetTest);
-    userInput.addEventListener('input', highlightText);
+    userInput.addEventListener('input', function() {
+        if (!testStarted) {
+            startTest();
+        }
+        highlightText();
+    });
+
+    userInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default action of adding a new line
+            stopTest();
+        }
+    });
 
     // Initialize with a random text from the default difficulty level
     updateSampleText();
